@@ -37,7 +37,10 @@ class DataWorks:
 
         self.horsepower = np.random.randint(low=90, high=500, size=self.samples)
         self.weight = np.random.randint(low=800, high=3500, size=self.samples)
-        self.cylinders = np.random.randint(low=2, high=12, size=self.samples)
+
+        possible_num_cylinders = np.array([3, 4, 5, 6, 8, 10, 12])
+        self.cylinders = rng.choice(possible_num_cylinders, size=self.samples)
+
         self.age = np.random.randint(low=0, high=25, size=self.samples)
 
         return self
@@ -45,9 +48,9 @@ class DataWorks:
     def generate_targets(self) -> "DataWorks":
         """
         Hidden nonlinear function that governs the data's nature.
-        F(E, H, W, C, A) = 80 - 5E - 0.003*H^2 - 0.001W + 2*sin(C) + ln(A + 1)
+        F(E, H, W, C, A) = 55 - 3E - 0.00012*H^0.5 - 0.005W + 4*sin(C) + 2*ln(A + 1)
         """
-        self.target = (80 - 5*self.engine_size - 0.003*(self.horsepower**2) - 0.001*self.weight + 2*np.sin(self.cylinders) + np.log(self.age + 1))
+        self.target = (55 - 3*self.engine_size - 0.00012*(self.horsepower**0.5) - 0.005*self.weight + 4*np.sin(self.cylinders) + 2*np.log(self.age + 1))
         return self
     
     def add_noise(self) -> "DataWorks":
