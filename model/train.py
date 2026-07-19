@@ -1,0 +1,66 @@
+import torch
+import torch.nn as nn
+from torch.utils.data import dataloader
+
+from data.dataset import MPGDataset
+from model.model import MPGModel
+
+import os
+
+BATCH_SIZE = 64
+LEARNING_RATE = 1e-3
+EPOCHS = 1000
+DATA = str(os.getenv("TRAINING_DATA"))
+
+training_set = MPGDataset(filepath=DATA, train=True)
+testing_set = MPGDataset(filepath=DATA, train=False, stats=training_set.stats)
+
+train_loader = dataloader(
+    dataset=training_set,
+    batch_size=BATCH_SIZE,
+    shuffle=True,
+    num_workers=3,
+)
+
+test_loader = dataloader(
+    dataset=testing_set,
+    batch_size=BATCH_SIZE,
+    shuffle=True,
+    num_workers=3,
+)
+
+model = MPGModel()
+criterion = nn.MSELoss()
+optimiser = torch.optim.Adam(
+    model.parameters(),
+    lr=LEARNING_RATE
+)
+
+
+for epoch in range(EPOCHS):
+    for x, y in train_loader:
+        predictions = model(x)
+
+        loss = criterion(predictions, y)
+
+        optimiser.zero_grad()
+
+        loss.backward()
+
+        optimiser.step()
+
+        print(
+        f"Epoch: {epoch:03d}"
+        f"Loss: {loss.item():.4f}"
+        )
+
+model.eval()
+with torch.no_grad():
+    predictions = model(x)
+
+torch.save(
+    model.state_dict(),
+    "bin/mpg-v1-144.pt"
+)
+
+

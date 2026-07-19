@@ -3,10 +3,12 @@ import numpy as np
 from typing import Dict
 
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
 rng = np.random.default_rng()
+NUM_SAMPLES = os.getenv("SAMPLE_SIZE")
 
 class DataWorks:
     def __init__(self, filepath: str, synthetic: bool = True, samples: int = 10000):
@@ -76,7 +78,7 @@ class DataWorks:
     
     
 if __name__ == "__main__":
-    dw = DataWorks("training_data/training_10k.csv", samples=10000)
+    dw = DataWorks("training_data/training_10k.csv", samples=NUM_SAMPLES)
     logger.info("Dataset generation started...")
     try:
         dw.generate_features().generate_targets().add_noise().build_dataset().to_csv()
