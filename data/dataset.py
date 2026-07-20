@@ -51,7 +51,7 @@ class MPGDataset(Dataset):
         self.features = self.df.drop(columns=['targets']).to_numpy()
         return self
     
-    def train_test_split(self) -> "MPGDataset" | np.ndarray[np.float64]:
+    def train_test_split(self) -> "MPGDataset":
         shuffled_indices: List[int] = list(range(len(self.features)))
         np.random.default_rng(seed=self.random_seed).shuffle(shuffled_indices)
         split_idx = int(self.train_split * len(shuffled_indices))

@@ -62,3 +62,5 @@ class MPGModel(nn.Module):
 
         # Output Layer
         x = self.fc6(x)
+
+        return x
