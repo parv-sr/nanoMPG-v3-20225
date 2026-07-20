@@ -36,10 +36,8 @@ optimiser = torch.optim.Adam(
     lr=LEARNING_RATE
 )
 
-model.train()
 
 for epoch in range(EPOCHS):
-    running_loss: float = 0.0
     for x, y in train_loader:
         predictions = model(x)
 
@@ -49,10 +47,10 @@ for epoch in range(EPOCHS):
 
         loss.backward()
 
-        optimiser.step(
+        optimiser.step()
 
         print(
-        f"Epoch: {epoch:03d}\n"
+        f"Epoch: {epoch:03d}"
         f"Loss: {loss.item():.4f}"
         )
 
