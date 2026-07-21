@@ -1,0 +1,12 @@
+name: narrow_deep
+model:
+  layer_sizes: [8, 16, 16, 16, 16, 16, 16, 1]
+  activation: leaky_relu
+  use_batch_norm: true
+  dropout: 0.05
+  use_residual: true
+training:
+  epochs: 500
+  batch_size: 64
+  learning_rate: 0.001
+  scheduler: step

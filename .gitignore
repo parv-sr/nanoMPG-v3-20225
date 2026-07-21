@@ -10,3 +10,7 @@ wheels/
 .venv
 
 .env
+
+bin/
+uv.lock
+*.lock

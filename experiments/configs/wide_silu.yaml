@@ -1,0 +1,12 @@
+name: wide_silu
+model:
+  layer_sizes: [8, 64, 128, 64, 32, 1]
+  activation: silu
+  use_batch_norm: true
+  dropout: 0.1
+  use_residual: false
+training:
+  epochs: 500
+  batch_size: 64
+  learning_rate: 0.001
+  scheduler: cosine

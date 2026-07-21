@@ -1,66 +1,100 @@
 import torch
 import torch.nn as nn
+from typing import List, Union
 
 
 class MPGModel(nn.Module):
-    def __init__(self):
+    def __init__(
+            self,
+            layer_sizes: List[int] | None = None,
+            activation: Union[str, List[str]] = "silu",
+            use_batch_norm: bool = False,
+            dropout: float = 0.0,
+            use_residual: bool = False
+    ):
         super(MPGModel, self).__init__()
 
-        self.fc1 = nn.Linear(
-            in_features=5,
-            out_features=6
-        )
+        if layer_sizes is None:
+            layer_sizes = [8, 64, 128, 64, 32, 1]
 
-        self.fc2 = nn.Linear(
-            in_features=6,
-            out_features=5
-        )
+        self.layer_sizes = layer_sizes
+        self.use_residual = use_residual
+        self.num_hidden = len(layer_sizes) - 2
 
-        self.fc3 = nn.Linear(
-            in_features=5,
-            out_features=5
-        )
+        if isinstance(activation, str):
+            activation_names = [activation] * self.num_hidden
+        else:
+            activation_names = list(activation)
 
-        self.fc4 = nn.Linear(
-            in_features=5,
-            out_features=4
-        )
+        self.layers = nn.ModuleList()
+        self.norms = nn.ModuleList()
+        self.acts = nn.ModuleList()
+        self.drop = nn.Dropout(p=dropout) if dropout > 0 else nn.Identity()
 
-        self.fc5 = nn.Linear(
-            in_features=4,
-            out_features=3
-        )
+        for i in range(len(layer_sizes) - 1):
+            self.layers.append(nn.Linear(layer_sizes[i], layer_sizes[i + 1]))
 
-        self.fc6 = nn.Linear(
-            in_features=3,
-            out_features=1
-        )
+            if i < self.num_hidden:
+                if use_batch_norm:
+                    self.norms.append(nn.BatchNorm1d(layer_sizes[i + 1]))
+                else:
+                    self.norms.append(nn.Identity())
 
-        self.activation = nn.Sigmoid()
+                self.acts.append(self._build_activation(activation_names[i]))
+
+    @staticmethod
+    def _build_activation(name: str) -> nn.Module:
+        if name == "sigmoid":
+            return nn.Sigmoid()
+        elif name == "relu":
+            return nn.ReLU()
+        elif name == "leaky_relu":
+            return nn.LeakyReLU(negative_slope=0.01)
+        elif name == "elu":
+            return nn.ELU()
+        elif name == "gelu":
+            return nn.GELU()
+        elif name == "silu":
+            return nn.SiLU()
+        elif name == "mish":
+            return nn.Mish()
+        elif name == "tanh":
+            return nn.Tanh()
+        elif name == "prelu":
+            return nn.PReLU()
+        else:
+            return nn.SiLU()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass"""
-        # Hidden Layer 1
-        x = self.fc1(x)
-        x = self.activation(x)
+        for i in range(len(self.layers) - 1):
+            identity = x
+            x = self.layers[i](x)
+            x = self.norms[i](x)
+            x = self.acts[i](x)
+            x = self.drop(x)
 
-        # Hidden Layer 2
-        x = self.fc2(x)
-        x = self.activation(x)
+            if self.use_residual and identity.shape[-1] == x.shape[-1]:
+                x = x + identity
 
-        # Hidden Layer 3
-        x = self.fc3(x)
-        x = self.activation(x)
-
-        # Hidden Layer 4
-        x = self.fc4(x)
-        x = self.activation(x)
-
-        # Hidden Layer 5
-        x = self.fc5(x)
-        x = self.activation(x)
-
-        # Output Layer
-        x = self.fc6(x)
+        x = self.layers[-1](x)
 
         return x
+
+    def parameter_count(self) -> int:
+        return sum(p.numel() for p in self.parameters())
+
+    def get_hidden_activations(self, x: torch.Tensor) -> List[torch.Tensor]:
+        results = []
+
+        for i in range(len(self.layers) - 1):
+            identity = x
+            x = self.layers[i](x)
+            x = self.norms[i](x)
+            x = self.acts[i](x)
+
+            if self.use_residual and identity.shape[-1] == x.shape[-1]:
+                x = x + identity
+
+            results.append(x.detach().clone())
+
+        return results

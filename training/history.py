@@ -11,3 +11,5 @@ class TrainingHistory:
     targets: List[float] = field(default_factory=list)
     residuals: List[float] = field(default_factory=list)
     model_snapshots: List[Dict[str, Any]] = field(default_factory=list)
+    gradient_norms: List[Dict[str, float]] = field(default_factory=list)
+    learning_rates: List[float] = field(default_factory=list)
