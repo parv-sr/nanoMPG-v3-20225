@@ -1,0 +1,45 @@
+[
+  {
+    "epoch": 5000,
+    "layer_0": {
+      "mean": 0.16645793616771698,
+      "std": 0.7334633469581604,
+      "min": -0.27846449613571167,
+      "max": 6.404107570648193,
+      "dead_neuron_pct": 1.8798828125,
+      "near_zero_pct": 20.80078125,
+      "activation_type": "SiLU",
+      "layer_size": 64
+    },
+    "layer_1": {
+      "mean": 0.1117519736289978,
+      "std": 0.7421565651893616,
+      "min": -0.27846455574035645,
+      "max": 11.990824699401855,
+      "dead_neuron_pct": 5.77392578125,
+      "near_zero_pct": 28.7109375,
+      "activation_type": "SiLU",
+      "layer_size": 128
+    },
+    "layer_2": {
+      "mean": 0.116672083735466,
+      "std": 0.6330664157867432,
+      "min": -0.27846455574035645,
+      "max": 8.748861312866211,
+      "dead_neuron_pct": 3.80859375,
+      "near_zero_pct": 27.490234375,
+      "activation_type": "SiLU",
+      "layer_size": 64
+    },
+    "layer_3": {
+      "mean": 0.04509049281477928,
+      "std": 0.22483643889427185,
+      "min": -0.2784639894962311,
+      "max": 3.0925228595733643,
+      "dead_neuron_pct": 6.884765625,
+      "near_zero_pct": 63.671875,
+      "activation_type": "SiLU",
+      "layer_size": 32
+    }
+  }
+]

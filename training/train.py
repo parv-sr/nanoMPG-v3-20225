@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
+import numpy as np
 from torch.utils.data import DataLoader
 import copy
 
-from training.history import TrainingHistory
+from training.history import TrainingHistory, EvaluationMetrics
 
 
 def train(
@@ -13,8 +14,18 @@ def train(
         optimiser: torch.optim.Optimizer,
         epochs: int,
         history: TrainingHistory,
-        scheduler=None
+        scheduler=None,
+        snapshot_interval: int = 10,
 ) -> TrainingHistory:
+    """
+    Train the model and record history.
+
+    Parameters
+    ----------
+    snapshot_interval : int
+        Save a model snapshot every N epochs (default 10).
+        Reduces memory usage for long training runs.
+    """
 
     for epoch in range(epochs):
         model.train()
@@ -46,9 +57,12 @@ def train(
 
         history.train_loss.append(avg_loss)
         history.fc1_weights.append(model.layers[0].weight.data.clone().cpu().numpy())
-        history.model_snapshots.append(copy.deepcopy(model.state_dict()))
         history.gradient_norms.append(avg_grad_norms)
         history.learning_rates.append(optimiser.param_groups[0]["lr"])
+
+        # Snapshot at configured interval to control memory
+        if (epoch + 1) % snapshot_interval == 0 or epoch == 0:
+            history.model_snapshots.append(copy.deepcopy(model.state_dict()))
 
         if scheduler is not None:
             scheduler.step()
@@ -94,5 +108,37 @@ def evaluate(
     history.predictions = all_predictions.tolist()
     history.targets = all_targets.tolist()
     history.residuals = all_residuals.tolist()
+
+    # ── Compute evaluation metrics ───────────────────────────────
+    mse = float(np.mean(all_residuals ** 2))
+    rmse = float(np.sqrt(mse))
+    mae = float(np.mean(np.abs(all_residuals)))
+    max_err = float(np.max(np.abs(all_residuals)))
+    median_ae = float(np.median(np.abs(all_residuals)))
+
+    ss_res = float(np.sum(all_residuals ** 2))
+    ss_tot = float(np.sum((all_targets - all_targets.mean()) ** 2))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+
+    history.eval_metrics = EvaluationMetrics(
+        mse=mse,
+        rmse=rmse,
+        mae=mae,
+        r2=r2,
+        max_error=max_err,
+        median_ae=median_ae,
+    )
+
+    # Print summary table
+    print("\n" + "=" * 50)
+    print("         EVALUATION METRICS")
+    print("=" * 50)
+    print(f"  MSE          : {mse:.6f}")
+    print(f"  RMSE         : {rmse:.6f}")
+    print(f"  MAE          : {mae:.6f}")
+    print(f"  R²           : {r2:.6f}")
+    print(f"  Max Error    : {max_err:.6f}")
+    print(f"  Median AE    : {median_ae:.6f}")
+    print("=" * 50 + "\n")
 
     return history

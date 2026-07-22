@@ -19,7 +19,9 @@ from visualisation.visualiser import Visualiser
 
 FEATURE_NAMES = [
     "engine_size", "horsepower", "weight", "cylinders",
-    "age", "turbo_pressure", "fuel_octane", "drivetrain_ratio"
+    "age", "turbo_pressure", "fuel_octane", "drivetrain_ratio",
+    "compression_ratio", "aerodynamic_drag", "tire_width",
+    "ambient_temp", "altitude", "ethanol_blend"
 ]
 
 def load_config(config_path: str) -> dict:

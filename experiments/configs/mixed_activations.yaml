@@ -1,6 +1,6 @@
 name: mixed_activations
 model:
-  layer_sizes: [8, 64, 128, 64, 32, 1]
+  layer_sizes: [14, 64, 128, 64, 32, 1]
   activation:
     - gelu
     - gelu

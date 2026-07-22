@@ -1,6 +1,6 @@
 name: baseline
 model:
-  layer_sizes: [8, 16, 16, 8, 1]
+  layer_sizes: [14, 16, 16, 8, 1]
   activation: sigmoid
   use_batch_norm: false
   dropout: 0.0

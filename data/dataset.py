@@ -8,7 +8,7 @@ from typing import List, Any, Tuple
 from dataclasses import dataclass
 import os
 
-NUM_SAMPLES = int(os.getenv("SAMPLE_SIZE"))
+NUM_SAMPLES = int(os.getenv("SAMPLE_SIZE", "25000"))
 
 @dataclass
 class NormalisationStats:
@@ -101,7 +101,7 @@ class MPGDataset(Dataset):
     def to_tensors(self) -> "MPGDataset":
         self.x = torch.tensor(self.features, dtype=torch.float32)
         self.y = torch.tensor(self.targets, dtype=torch.float32)
-        self.y = self.y[:, None]       # convert from (8000, ) to (8000, 1)
+        self.y = self.y[:, None]       # convert from (N, ) to (N, 1)
         return self
 
     def __len__(self) -> int:
@@ -117,17 +117,16 @@ class MPGDataset(Dataset):
 
 if __name__ == "__main__":
     train_dataset = MPGDataset(
-        filepath=r"C:\F DRIVE\nonlinear_regression\training_data\training_10k.csv",
+        filepath=r"C:\F DRIVE\nonlinear_regression\training_data\training_25k.csv",
         train=True,
         train_split=0.8,
         random_seed=42
     ).prepare()
 
     test_dataset = MPGDataset(
-        filepath=r"C:\F DRIVE\nonlinear_regression\training_data\training_10k.csv",
+        filepath=r"C:\F DRIVE\nonlinear_regression\training_data\training_25k.csv",
         train=False,
         stats=train_dataset.stats,
         train_split=0.8,
         random_seed=42
     ).prepare()
-    

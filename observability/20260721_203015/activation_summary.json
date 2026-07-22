@@ -1,0 +1,53 @@
+{
+  "num_snapshots": 1,
+  "layers": {
+    "layer_0": {
+      "activation_type": "SiLU",
+      "layer_size": 64,
+      "final_dead_neuron_pct": 1.8798828125,
+      "avg_dead_neuron_pct": 1.8798828125,
+      "final_mean": 0.16645793616771698,
+      "final_std": 0.7334633469581604,
+      "mean_range": [
+        -0.27846449613571167,
+        6.404107570648193
+      ]
+    },
+    "layer_1": {
+      "activation_type": "SiLU",
+      "layer_size": 128,
+      "final_dead_neuron_pct": 5.77392578125,
+      "avg_dead_neuron_pct": 5.77392578125,
+      "final_mean": 0.1117519736289978,
+      "final_std": 0.7421565651893616,
+      "mean_range": [
+        -0.27846455574035645,
+        11.990824699401855
+      ]
+    },
+    "layer_2": {
+      "activation_type": "SiLU",
+      "layer_size": 64,
+      "final_dead_neuron_pct": 3.80859375,
+      "avg_dead_neuron_pct": 3.80859375,
+      "final_mean": 0.116672083735466,
+      "final_std": 0.6330664157867432,
+      "mean_range": [
+        -0.27846455574035645,
+        8.748861312866211
+      ]
+    },
+    "layer_3": {
+      "activation_type": "SiLU",
+      "layer_size": 32,
+      "final_dead_neuron_pct": 6.884765625,
+      "avg_dead_neuron_pct": 6.884765625,
+      "final_mean": 0.04509049281477928,
+      "final_std": 0.22483643889427185,
+      "mean_range": [
+        -0.2784639894962311,
+        3.0925228595733643
+      ]
+    }
+  }
+}
